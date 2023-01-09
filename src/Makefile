@@ -52,11 +52,8 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = main.cpp \
-		main_window.cpp moc_main_window.cpp
-OBJECTS       = main.o \
-		main_window.o \
-		moc_main_window.o
+SOURCES       = main.cpp 
+OBJECTS       = main.o
 DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/common/unix.conf \
 		/usr/lib/qt/mkspecs/common/linux.conf \
@@ -140,8 +137,7 @@ DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/features/exceptions.prf \
 		/usr/lib/qt/mkspecs/features/yacc.prf \
 		/usr/lib/qt/mkspecs/features/lex.prf \
-		taimen.pro main_window.hpp main.cpp \
-		main_window.cpp
+		taimen.pro  main.cpp
 QMAKE_TARGET  = taimen
 DESTDIR       = 
 TARGET        = taimen
@@ -337,8 +333,7 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/qt/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents main_window.hpp $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp main_window.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -370,14 +365,8 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/qt/mkspecs/features/data/dummy.cpp
 	g++ -pipe -O2 -flto -fno-fat-lto-objects -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/qt/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_main_window.cpp
+compiler_moc_header_make_all:
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_main_window.cpp
-moc_main_window.cpp: main_window.hpp \
-		moc_predefs.h \
-		/usr/bin/moc
-	/usr/bin/moc $(DEFINES) --include /home/petri/cpp_hommat/taimen/src/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/petri/cpp_hommat/taimen/src -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/12.2.0 -I/usr/include/c++/12.2.0/x86_64-pc-linux-gnu -I/usr/include/c++/12.2.0/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.2.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.2.0/include-fixed -I/usr/include main_window.hpp -o moc_main_window.cpp
-
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
@@ -390,18 +379,12 @@ compiler_yacc_impl_make_all:
 compiler_yacc_impl_clean:
 compiler_lex_make_all:
 compiler_lex_clean:
-compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean 
+compiler_clean: compiler_moc_predefs_clean 
 
 ####### Compile
 
-main.o: main.cpp main_window.hpp
+main.o: main.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
-
-main_window.o: main_window.cpp main_window.hpp
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main_window.o main_window.cpp
-
-moc_main_window.o: moc_main_window.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_main_window.o moc_main_window.cpp
 
 ####### Install
 
