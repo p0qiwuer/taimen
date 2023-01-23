@@ -5,6 +5,6 @@ QT = core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-SOURCES += main.cpp
-#HEADERS += main_window.hpp 
+SOURCES += main.cpp window.cpp split.cpp
+HEADERS += window.hpp split.hpp
 
