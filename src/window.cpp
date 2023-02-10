@@ -1,44 +1,65 @@
 #include "window.hpp"
 #include <QTimer>
+#include <QApplication>
+#include <QPalette>
+#include <iostream> // temp
 
-Window::Window() {
+Window::Window(QWidget* parent) 
+    : QWidget(parent) {
     constexpr int screen_width = 480;
     constexpr int screen_height = 640;
 
     setFixedSize(screen_width, screen_height);
 
-    scene = new QGraphicsScene(10, 10, screen_width - 20, screen_height - 20);
-    scene->setBackgroundBrush(Qt::black);
+    QPalette pal = QPalette();
+    pal.setColor(QPalette::Window, Qt::black);
+    pal.setColor(QPalette::WindowText, Qt::white);
+    setAutoFillBackground(true);
+    setPalette(pal);
 
-    QGraphicsTextItem* title = new QGraphicsTextItem("Hello there");
-    title->setDefaultTextColor(Qt::white);
-    qreal title_width = title->boundingRect().width();
-    title->setPos(screen_width / 2 - title_width / 2, 0); // Center the title
+    QLabel* title = new QLabel("Hello there", this);
+    title->setGeometry(0, 0, screen_width, 30);
+    title->setAlignment(Qt::AlignCenter);
 
-    main_timer_display = new QGraphicsTextItem("00:00:00.00");
-    main_timer_display->setDefaultTextColor(Qt::white);
-    main_timer_display->setPos(0, 70);
+    main_timer_display = new QLabel("00:00:00.00", this);
+    main_timer_display->setGeometry(0, 0, 100, 30);
 
-    scene->addItem(title);
-    scene->addItem(main_timer_display);
-    setScene(scene);
+    connect(&timer_updater, SIGNAL(timeout()), this, SLOT(update_timer()));
 
-    QTimer* timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(update_timer()));
-    timer->start(1);
+}
+
+void Window::start_timer() {
+    main_timer.start();
+    timer_updater.start(1);
+}
+
+void Window::stop_timer() {
+    timer_updater.stop();
+    main_timer.stop();
+    main_timer_display->setText(main_timer.current_time_string());
 }
 
 void Window::update_timer() {
-    if (main_timer.started) {
-        main_timer.update();
-        main_timer_display->setPlainText(main_timer.current_time_string());
-    }
+    main_timer.update();
+    main_timer_display->setText(main_timer.current_time_string());
 }
 
 void Window::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Return) {
-        main_timer.start();
+        if (main_timer.is_started)
+            stop_timer();
+        else
+            start_timer();
+    } else if (event->key() == Qt::Key_Space) {
+
+    } else if (event->key() == Qt::Key_Backspace) {
+        if (!main_timer.is_started) {
+            main_timer.reset();
+            main_timer_display->setText("00:00:00.00");
+        }
+    } else if (event->key() == Qt::Key_Escape) {
+        QApplication::instance()->quit();
     } else {
-        QGraphicsView::keyPressEvent(event);
+        QWidget::keyPressEvent(event);
     }
 }

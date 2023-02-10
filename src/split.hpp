@@ -15,13 +15,17 @@ struct Split {
 class MainTimer {
     public:
         void start();
+        void stop();
         void update();
-        QString current_time_string();
+        void reset();
+        QString current_time_string() const;
+        bool is_started = false;
 
-        bool started = false;
     private:
         std::chrono::time_point<std::chrono::steady_clock> start_time;
-        std::chrono::milliseconds elapsed_time;
+        std::chrono::nanoseconds elapsed_time = std::chrono::nanoseconds::zero();
 };
+
+QString to_2digit_string(const int time_value);
 
 #endif // SPLIT_HPP

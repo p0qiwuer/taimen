@@ -2,26 +2,29 @@
 #define WINDOW_HPP
 
 #include "split.hpp"
-#include <QApplication>
-#include <QGraphicsView>
-#include <QGraphicsScene>
-#include <QGraphicsTextItem>
+#include <QWidget>
+#include <QLabel>
 #include <QKeyEvent>
+#include <QTimer>
 #include <vector>
 
 // The main window will be QGraphicsView object since it's the only window there will be
-class Window : public QGraphicsView { 
+class Window : public QWidget { 
     Q_OBJECT
     public:
-        explicit Window();
-    private slots:
+        explicit Window(QWidget* parent = nullptr);
+        void start_timer();
+        void stop_timer();
+
+    public slots:
         void update_timer();
+
     private:
         void keyPressEvent(QKeyEvent* event);
-        QGraphicsScene* scene;
         std::vector<Split> splits;
         MainTimer main_timer;
-        QGraphicsTextItem* main_timer_display;
+        QLabel* main_timer_display;
+        QTimer timer_updater;
 };
 
 #endif // WINDOW_HPP
