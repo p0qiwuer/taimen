@@ -13,13 +13,13 @@ class Window : public QWidget {
     Q_OBJECT
     public:
         explicit Window(QWidget* parent = nullptr);
-        void start_timer();
-        void stop_timer();
 
     public slots:
         void update_timer();
 
     private:
+        void start_timer();
+        void stop_timer();
         void keyPressEvent(QKeyEvent* event);
         std::vector<Split> splits;
         MainTimer main_timer;

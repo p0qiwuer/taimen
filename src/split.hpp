@@ -7,9 +7,9 @@
 #include <QString>
 
 struct Split {
-    Split(QString other_name, std::chrono::milliseconds other_best_time);
+    Split(QString other_name, std::chrono::nanoseconds other_best_time);
     const QString name;
-    std::chrono::milliseconds best_time;
+    std::chrono::nanoseconds best_time;
 };
 
 class MainTimer {
@@ -27,5 +27,6 @@ class MainTimer {
 };
 
 QString to_2digit_string(const int time_value);
+QString nanoseconds_to_time_string(const std::chrono::nanoseconds& nanoseconds);
 
 #endif // SPLIT_HPP
