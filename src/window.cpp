@@ -38,6 +38,8 @@ Window::Window(QWidget* parent)
     splits.emplace_back(split1);
     Split split2(QString("Split 2"), std::chrono::nanoseconds(178000000000));
     splits.emplace_back(split2);
+    Split split3(QString("Split 3"), std::chrono::nanoseconds(219000000000));
+    splits.emplace_back(split2);
     for (size_t i = 0; i < splits.size(); ++i) {
         QLabel* split_name = new QLabel(splits[i].name, this);
         split_name->setGeometry(0, (i + 1) * 30, screen_width / 2, 30);
