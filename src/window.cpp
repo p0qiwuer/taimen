@@ -2,7 +2,6 @@
 #include <QTimer>
 #include <QApplication>
 #include <QPalette>
-#include <iostream> // temp
 
 Window::Window(QWidget* parent) 
     : QWidget(parent) {
@@ -19,7 +18,6 @@ Window::Window(QWidget* parent)
 
     QFont font("Helvetica");
     font.setPixelSize(20);
-    std::cout << font.pixelSize() << "\n";
     setFont(font);
 
     QLabel* title = new QLabel("Hello there", this);
