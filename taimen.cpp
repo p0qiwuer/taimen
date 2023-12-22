@@ -1,9 +1,9 @@
-#include "window.hpp"
+#include "taimen.hpp"
 #include <QTimer>
 #include <QApplication>
 #include <QPalette>
 
-Window::Window(QWidget* parent) 
+Taimen::Taimen(QWidget* parent) 
     : QWidget(parent) {
     constexpr int screen_width = 480;
     constexpr int screen_height = 640;
@@ -51,23 +51,23 @@ Window::Window(QWidget* parent)
 
 }
 
-void Window::start_timer() {
+void Taimen::start_timer() {
     main_timer.start();
     timer_updater.start(1);
 }
 
-void Window::stop_timer() {
+void Taimen::stop_timer() {
     timer_updater.stop();
     main_timer.stop();
     main_timer_display->setText(main_timer.current_time_string());
 }
 
-void Window::update_timer() {
+void Taimen::update_timer() {
     main_timer.update();
     main_timer_display->setText(main_timer.current_time_string());
 }
 
-void Window::keyPressEvent(QKeyEvent* event) {
+void Taimen::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Return) {
         if (main_timer.is_started)
             stop_timer();

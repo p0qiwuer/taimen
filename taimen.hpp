@@ -1,5 +1,5 @@
-#ifndef WINDOW_HPP
-#define WINDOW_HPP
+#ifndef TAIMEN_HPP
+#define TAIMEN_HPP
 
 #include "split.hpp"
 #include <QWidget>
@@ -8,11 +8,10 @@
 #include <QTimer>
 #include <vector>
 
-// The main window will be QGraphicsView object since it's the only window there will be
-class Window : public QWidget { 
+class Taimen: public QWidget { 
     Q_OBJECT
     public:
-        explicit Window(QWidget* parent = nullptr);
+        explicit Taimen(QWidget* parent = nullptr);
 
     public slots:
         void update_timer();
@@ -27,4 +26,4 @@ class Window : public QWidget {
         QTimer timer_updater;
 };
 
-#endif // WINDOW_HPP
+#endif // TAIMEN_HPP

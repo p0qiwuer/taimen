@@ -1,11 +1,11 @@
 #include <QApplication>
-#include "window.hpp"
+#include "taimen.hpp"
 
 int main(int argc, char* argv[]) {
     QApplication app(argc, argv);
 
-    Window window;
-    window.show();
+    Taimen taimen;
+    taimen.show();
 
     return app.exec();
 }
