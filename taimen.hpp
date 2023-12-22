@@ -19,11 +19,13 @@ class Taimen: public QWidget {
     private:
         void start_timer();
         void stop_timer();
+        void update_splits();
         void keyPressEvent(QKeyEvent* event);
         std::vector<Split> splits;
         MainTimer main_timer;
         QLabel* main_timer_display;
         QTimer timer_updater;
+        int current_split;
 };
 
 #endif // TAIMEN_HPP

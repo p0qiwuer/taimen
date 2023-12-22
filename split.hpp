@@ -7,9 +7,10 @@
 #include <QString>
 
 struct Split {
-    Split(QString other_name, std::chrono::nanoseconds other_best_time);
+    Split(const QString& other_name, const std::chrono::nanoseconds& other_best_time);
     const QString name;
     std::chrono::nanoseconds best_time;
+    std::chrono::nanoseconds current_time;
 };
 
 class MainTimer {

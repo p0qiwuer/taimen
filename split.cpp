@@ -1,6 +1,10 @@
 #include "split.hpp"
 
-Split::Split(QString other_name, std::chrono::nanoseconds other_best_time) : name(other_name), best_time(other_best_time) {}
+Split::Split(const QString& other_name, const std::chrono::nanoseconds& other_best_time) : 
+    name(other_name), 
+    best_time(other_best_time), 
+    current_time(std::chrono::nanoseconds::zero()) 
+{}
 
 void MainTimer::start() {
     start_time = std::chrono::steady_clock::now() - elapsed_time;    
