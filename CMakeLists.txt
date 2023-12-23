@@ -18,6 +18,8 @@ set(PROJECT_SOURCES
         taimen.hpp
         split.cpp
         split.hpp
+        main_timer.cpp
+        main_timer.hpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

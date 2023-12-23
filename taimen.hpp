@@ -2,6 +2,7 @@
 #define TAIMEN_HPP
 
 #include "split.hpp"
+#include "main_timer.hpp"
 #include <QWidget>
 #include <QLabel>
 #include <QKeyEvent>
