@@ -3,7 +3,6 @@
 #include <QApplication>
 #include <QPalette>
 #include <QGridLayout>
-#include <QSpacerItem>
 
 constexpr int screen_width = 480;
 constexpr int screen_height = 640;
@@ -17,6 +16,8 @@ Taimen::Taimen(QWidget* parent)
     : QWidget(parent) {
 
     setFixedSize(screen_width, screen_height);
+
+    setContentsMargins(0, 0, 0, 0);
 
     QPalette pal = QPalette();
     pal.setColor(QPalette::Window, Qt::black);
@@ -32,13 +33,11 @@ Taimen::Taimen(QWidget* parent)
 
     QLabel* title = new QLabel("Hello there");
     title->setFixedHeight(title_height);
-    grid_layout->addWidget(title, 0, 0, 1, 3, Qt::AlignCenter);
+    grid_layout->addWidget(title, 0, 0, Qt::AlignCenter);
 
     main_timer_display = new QLabel(main_timer.current_time_string());
     main_timer_display->setFixedHeight(main_timer_height);
-    //main_timer_display->setGeometry(0, screen_height - split_pixel_height, screen_width, split_pixel_height);
-    //main_timer_display->setAlignment(Qt::AlignCenter);
-    grid_layout->addWidget(main_timer_display, 5, 0, 1, 3, Qt::AlignCenter);
+    grid_layout->addWidget(main_timer_display, 2, 0, Qt::AlignCenter);
 
     //QFrame* split_frame = new QFrame(this);
     //split_frame->setStyleSheet("background-color: rgb(50, 50, 50)");
@@ -51,16 +50,18 @@ Taimen::Taimen(QWidget* parent)
     splits.emplace_back(split2);
     Split split3(QString("Split 3"), std::chrono::nanoseconds(219000000000));
     splits.emplace_back(split3);
+
+    QGridLayout* split_layout = new QGridLayout();
+    grid_layout->setContentsMargins(0, 0, 0, 0);
+    split_layout->setContentsMargins(0, 0, 0, 0);
+    grid_layout->addLayout(split_layout, 1, 0);
+    grid_layout->setRowStretch(1, 1);
+
     for (size_t i = 0; i < splits.size(); ++i) {
-        QLabel* split_name = new QLabel(splits[i].name);
-        split_name->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-        grid_layout->addWidget(split_name, i + 1, 0);
-        QLabel* split_time = new QLabel(nanoseconds_to_time_string(splits[i].best_time));
-        split_time->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        grid_layout->addWidget(split_time, i + 1, 2);
+        SplitDisplay* split_display = new SplitDisplay(splits[i].name, splits[i].best_time, c_nanosec(-7875000000000), i == current_split);
+        split_layout->addWidget(split_display, i, 0);
     }
-    //update_splits();
-    grid_layout->setRowStretch(4, 1);
+    split_layout->setRowStretch(4, 1);
 
     connect(&timer_updater, SIGNAL(timeout()), this, SLOT(update_timer()));
 }

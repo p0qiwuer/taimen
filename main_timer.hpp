@@ -23,6 +23,7 @@ class MainTimer {
 
 c_nanosec c_zero();
 QString to_2digit_string(const int time_value);
-QString nanoseconds_to_time_string(const c_nanosec& nanoseconds);
+QString time_to_time_string(const c_nanosec& nanoseconds);
+QString time_difference_to_time_string(const c_nanosec& nanoseconds);
 
 #endif // MAIN_TIMER_HPP

@@ -21,7 +21,7 @@ void MainTimer::reset() {
 }
 
 QString MainTimer::current_time_string() const {
-    return nanoseconds_to_time_string(elapsed_time);
+    return time_to_time_string(elapsed_time);
 }
 
 c_nanosec c_zero() { return c_nanosec::zero(); }
@@ -33,7 +33,7 @@ QString to_2digit_string(const int time_value) {
         return "0" + QString::number(time_value);
 }
 
-QString nanoseconds_to_time_string(const c_nanosec& nanoseconds) {
+QString time_to_time_string(const c_nanosec& nanoseconds) {
     std::chrono::milliseconds milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(nanoseconds);
     int hours = milliseconds.count() / 3600000;
     int remaining = milliseconds.count() % 3600000;    
@@ -45,4 +45,49 @@ QString nanoseconds_to_time_string(const c_nanosec& nanoseconds) {
         + to_2digit_string(minutes) + ":"
         + to_2digit_string(seconds) + "."
         + to_2digit_string(remaining);
+}
+
+QString time_difference_to_time_string(const c_nanosec& nanoseconds) {
+    std::chrono::milliseconds milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(nanoseconds);
+    int hours = milliseconds.count() / 3600000;
+    int remaining = milliseconds.count() % 3600000;    
+    int minutes = remaining / 60000;
+    remaining = remaining % 60000;
+    int seconds = remaining / 1000;
+    remaining = (remaining % 1000) / 10;
+    if (hours != 0) {
+        if (hours > 0)
+            return QString::number(hours) + ":"
+                + to_2digit_string(minutes) + ":"
+                + to_2digit_string(seconds) + "."
+                + to_2digit_string(remaining);
+        else
+            return QString::number(hours) + ":"
+                + to_2digit_string(-minutes) + ":"
+                + to_2digit_string(-seconds) + "."
+                + to_2digit_string(-remaining);
+    } else if (minutes != 0) {
+        if (minutes > 0)
+            return QString::number(minutes) + ":"
+                + to_2digit_string(seconds) + "."
+                + to_2digit_string(remaining);
+        else
+            return QString::number(minutes) + ":"
+                + to_2digit_string(-seconds) + "."
+                + to_2digit_string(-remaining);
+    } else if (seconds != 0) {
+        if (seconds > 0)
+            return QString::number(seconds) + "."
+                + to_2digit_string(remaining);
+        else
+            return QString::number(seconds) + "."
+                + to_2digit_string(-remaining);
+    } else {
+        if (remaining > 0)
+            return "0."
+                + to_2digit_string(remaining);
+        else
+            return "-0."
+                + to_2digit_string(-remaining);
+    }
 }

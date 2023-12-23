@@ -12,6 +12,7 @@
 class Taimen: public QWidget { 
     Q_OBJECT
     public:
+        using spl_vector = std::vector<Split>;
         explicit Taimen(QWidget* parent = nullptr);
 
     public slots:
@@ -22,7 +23,7 @@ class Taimen: public QWidget {
         void stop_timer();
         void update_splits();
         void keyPressEvent(QKeyEvent* event);
-        std::vector<Split> splits;
+        spl_vector splits;
         MainTimer main_timer;
         QLabel* main_timer_display;
         QTimer timer_updater;
