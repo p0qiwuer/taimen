@@ -1,46 +1,52 @@
 #include "split.hpp"
+#include <QPalette>
+#include <iostream>
 
-Split::Split(QString other_name, std::chrono::nanoseconds other_best_time) : name(other_name), best_time(other_best_time) {}
+Split::Split(const QString& other_name, const c_nanosec& other_best_time, const c_nanosec& other_personal_best_run_time) : 
+    name(other_name),
+    best_time(other_best_time),
+    personal_best_run_time(other_personal_best_run_time),
+    current_time(c_zero())
+{}
 
-void MainTimer::start() {
-    start_time = std::chrono::steady_clock::now() - elapsed_time;    
-    is_started = true;
-}
+SplitDisplay::SplitDisplay(
+    const QString& name,
+    const c_nanosec& time,
+    const c_nanosec& difference,
+    const bool is_current_split, 
+    QWidget* parent
+) {
+    if (is_current_split) {
+        QPalette pal = QPalette();
+        pal.setColor(QPalette::Window, QColor(50, 50, 50));
+        setAutoFillBackground(true);
+        setPalette(pal);
+    }
 
-void MainTimer::stop() {
-    update();
-    is_started = false;
-}
-
-void MainTimer::update() {
-    elapsed_time = std::chrono::steady_clock::now() - start_time;
-}
-
-void MainTimer::reset() {
-    elapsed_time = std::chrono::nanoseconds::zero();
-}
-
-QString MainTimer::current_time_string() const {
-    return nanoseconds_to_time_string(elapsed_time);
-}
-
-QString to_2digit_string(const int time_value) {
-    if (time_value >= 10)
-        return QString::number(time_value);
+    name_label = new QLabel(name);
+    time_label = new QLabel(time_to_time_string(time));
+    if (difference != c_zero())
+        difference_label = new QLabel(time_difference_to_time_string(difference));
     else
-        return "0" + QString::number(time_value);
+        difference_label = new QLabel("");
+
+    name_label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    time_label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    difference_label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+
+    grid = new QGridLayout();
+    grid->addWidget(name_label, 0, 0);
+    grid->addWidget(time_label, 0, 2);
+    grid->addWidget(difference_label, 0, 1);
+    grid->setContentsMargins(0, 0, 0, 0);
+
+    setLayout(grid);
 }
 
-QString nanoseconds_to_time_string(const std::chrono::nanoseconds& nanoseconds) {
-    std::chrono::milliseconds milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(nanoseconds);
-    int hours = milliseconds.count() / 3600000; // 1 hour = 3 600 000 milliseconds, 1 minute = 60 000 milliseconds etc
-    int remaining = milliseconds.count() % 3600000;    
-    int minutes = remaining / 60000;
-    remaining = remaining % 60000;
-    int seconds = remaining / 1000;
-    remaining = (remaining % 1000) / 10; //centiseconds
-    return to_2digit_string(hours) + ":" 
-        + to_2digit_string(minutes) + ":"
-        + to_2digit_string(seconds) + "."
-        + to_2digit_string(remaining);
+SplitDisplay::~SplitDisplay() {
+    delete name_label;
+    delete time_label;
+    if (difference_label != nullptr)
+        delete difference_label;
+    delete grid;
 }

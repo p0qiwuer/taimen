@@ -1,32 +1,36 @@
 #ifndef SPLIT_HPP
 #define SPLIT_HPP
 
-// Class defitions for Split and MainTimer
-
-#include <chrono>
+#include "main_timer.hpp"
 #include <QString>
+#include <QLabel>
+#include <QGridLayout>
+#include <QWidget>
 
 struct Split {
-    Split(QString other_name, std::chrono::nanoseconds other_best_time);
+    Split(const QString& other_name, const c_nanosec& other_best_time, const c_nanosec& other_personal_best_run_time);
     const QString name;
-    std::chrono::nanoseconds best_time;
+    c_nanosec best_time;
+    c_nanosec personal_best_run_time;
+    c_nanosec current_time;
 };
 
-class MainTimer {
+class SplitDisplay: public QWidget {
     public:
-        void start();
-        void stop();
-        void update();
-        void reset();
-        QString current_time_string() const;
-        bool is_started = false;
+        explicit SplitDisplay(
+            const QString& name, 
+            const c_nanosec& time, 
+            const c_nanosec& difference,
+            const bool is_current_split = false,
+            QWidget* parent = nullptr
+        );
+        ~SplitDisplay();
 
     private:
-        std::chrono::time_point<std::chrono::steady_clock> start_time;
-        std::chrono::nanoseconds elapsed_time = std::chrono::nanoseconds::zero();
+        QLabel* name_label;
+        QLabel* time_label;
+        QLabel* difference_label;
+        QGridLayout* grid;
 };
-
-QString to_2digit_string(const int time_value);
-QString nanoseconds_to_time_string(const std::chrono::nanoseconds& nanoseconds);
 
 #endif // SPLIT_HPP
