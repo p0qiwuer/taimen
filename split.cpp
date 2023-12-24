@@ -43,10 +43,24 @@ SplitDisplay::SplitDisplay(
     setLayout(grid);
 }
 
+SplitDisplay::SplitDisplay(const SplitDisplay& other) : 
+    name_label(other.name_label),
+    time_label(other.time_label),   
+    difference_label(other.difference_label),
+    grid(other.grid)
+{}
+
 SplitDisplay::~SplitDisplay() {
     delete name_label;
     delete time_label;
-    if (difference_label != nullptr)
-        delete difference_label;
+    delete difference_label;
     delete grid;
+}
+
+SplitDisplay& SplitDisplay::operator=(const SplitDisplay& other) {
+    name_label = other.name_label;    
+    time_label = other.time_label;    
+    difference_label = other.difference_label;    
+    grid = other.grid;
+    return *this;
 }

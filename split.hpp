@@ -17,14 +17,16 @@ struct Split {
 
 class SplitDisplay: public QWidget {
     public:
-        explicit SplitDisplay(
+        SplitDisplay(
             const QString& name, 
             const c_nanosec& time, 
             const c_nanosec& difference,
             const bool is_current_split = false,
             QWidget* parent = nullptr
         );
+        SplitDisplay(const SplitDisplay& other);
         ~SplitDisplay();
+        SplitDisplay& operator=(const SplitDisplay& other);
 
     private:
         QLabel* name_label;
