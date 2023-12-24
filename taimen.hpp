@@ -21,7 +21,10 @@ class Taimen: public QWidget {
     private:
         void start_timer();
         void stop_timer();
+        void reset_timer();
         void update_splits();
+        void handle_splitting();
+        void finish_run();
         void keyPressEvent(QKeyEvent* event);
         std::vector<Split> splits;
         std::vector<SplitDisplay*> split_displays;

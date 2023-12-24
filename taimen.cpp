@@ -9,7 +9,6 @@ Taimen::Taimen(QWidget* parent)
 
     constexpr int screen_width = 480;
     constexpr int screen_height = 640;
-    constexpr int first_split_index = 0;
     constexpr int font_pixel_size = 20;
     constexpr int title_height = 50;
     constexpr int main_timer_height = 50;
@@ -38,7 +37,7 @@ Taimen::Taimen(QWidget* parent)
     main_timer_display->setFixedHeight(main_timer_height);
     grid_layout->addWidget(main_timer_display, 2, 0, Qt::AlignCenter);
 
-    current_split = first_split_index;
+    current_split = 0;
     Split split1(QString("Split 1"), c_nanosec(61000000000), c_nanosec(51000000000));
     splits.emplace_back(split1);
     Split split2(QString("Split 2"), c_nanosec(178000000000), c_nanosec(158000000000));
@@ -80,6 +79,14 @@ void Taimen::update_timer() {
     main_timer_display->setText(main_timer.current_time_string());
 }
 
+void Taimen::reset_timer() {
+    main_timer.reset();
+    main_timer_display->setText(main_timer.current_time_string());
+    current_split = 0;
+    cumulative_run_times = std::vector<c_nanosec>(cumulative_best_run_times);
+    update_splits();
+}
+
 void Taimen::update_splits() {
     for (size_t i = 0; i < split_displays.size(); ++i) {
         delete split_displays[i];
@@ -97,22 +104,35 @@ void Taimen::update_splits() {
     split_layout->setRowStretch(split_displays.size() + 1, 1);
 }
 
+void Taimen::handle_splitting() {
+    const c_nanosec elapsed_time = main_timer.current_time();
+    cumulative_run_times[current_split] = elapsed_time;
+    if (current_split > 0)
+        splits[current_split].current_time = elapsed_time - cumulative_run_times[current_split - 1];
+    else
+        splits[current_split].current_time = elapsed_time;
+    ++current_split;
+    update_splits();
+    if (current_split == splits.size())
+        finish_run();
+}
+
+void Taimen::finish_run() {
+    stop_timer();
+}
+
 void Taimen::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Return) {
         if (main_timer.is_started)
             stop_timer();
-        else
+        else if (current_split != splits.size())
             start_timer();
     } else if (event->key() == Qt::Key_Space) {
-        if (main_timer.is_started) {
-            cumulative_run_times[current_split] = main_timer.current_time();
-            ++current_split;
-            update_splits();
-        }
+        if (main_timer.is_started)
+            handle_splitting();
     } else if (event->key() == Qt::Key_Backspace) {
         if (!main_timer.is_started) {
-            main_timer.reset();
-            main_timer_display->setText(main_timer.current_time_string());
+            reset_timer();
         }
     } else if (event->key() == Qt::Key_Escape) {
         QApplication::instance()->quit();
