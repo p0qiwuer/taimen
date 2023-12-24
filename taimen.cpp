@@ -2,18 +2,17 @@
 #include <QTimer>
 #include <QApplication>
 #include <QPalette>
-#include <QGridLayout>
 
-constexpr int screen_width = 480;
-constexpr int screen_height = 640;
-constexpr int first_split_index = 0;
-constexpr int font_pixel_size = 20;
-constexpr int title_height = 50;
-constexpr int main_timer_height = 50;
-constexpr int n_of_split_displays = 3;
 
 Taimen::Taimen(QWidget* parent) 
     : QWidget(parent) {
+
+    constexpr int screen_width = 480;
+    constexpr int screen_height = 640;
+    constexpr int first_split_index = 0;
+    constexpr int font_pixel_size = 20;
+    constexpr int title_height = 50;
+    constexpr int main_timer_height = 50;
 
     setFixedSize(screen_width, screen_height);
 
@@ -29,7 +28,7 @@ Taimen::Taimen(QWidget* parent)
     font.setPixelSize(font_pixel_size);
     setFont(font);
 
-    QGridLayout* grid_layout = new QGridLayout(this);
+    grid_layout = new QGridLayout(this);
 
     QLabel* title = new QLabel("Hello there");
     title->setFixedHeight(title_height);
@@ -39,29 +38,28 @@ Taimen::Taimen(QWidget* parent)
     main_timer_display->setFixedHeight(main_timer_height);
     grid_layout->addWidget(main_timer_display, 2, 0, Qt::AlignCenter);
 
-    //QFrame* split_frame = new QFrame(this);
-    //split_frame->setStyleSheet("background-color: rgb(50, 50, 50)");
-    //split_frame->setGeometry(0, split_pixel_height, screen_width, split_pixel_height);
-
     current_split = first_split_index;
-    Split split1(QString("Split 1"), std::chrono::nanoseconds(61000000000));
+    Split split1(QString("Split 1"), c_nanosec(61000000000), c_nanosec(51000000000));
     splits.emplace_back(split1);
-    Split split2(QString("Split 2"), std::chrono::nanoseconds(178000000000));
+    Split split2(QString("Split 2"), c_nanosec(178000000000), c_nanosec(158000000000));
     splits.emplace_back(split2);
-    Split split3(QString("Split 3"), std::chrono::nanoseconds(219000000000));
+    Split split3(QString("Split 3"), c_nanosec(219000000000), c_nanosec(216000000000));
     splits.emplace_back(split3);
 
-    QGridLayout* split_layout = new QGridLayout();
+    c_nanosec cumulative_best_run_time = c_zero();
+    for (size_t i = 0; i < splits.size(); ++i) {
+        cumulative_best_run_time += splits[i].best_time;
+        cumulative_best_run_times.emplace_back(cumulative_best_run_time);
+        cumulative_run_times.emplace_back(cumulative_best_run_time);
+    }
+
+    split_layout = new QGridLayout();
     grid_layout->setContentsMargins(0, 0, 0, 0);
     split_layout->setContentsMargins(0, 0, 0, 0);
     grid_layout->addLayout(split_layout, 1, 0);
     grid_layout->setRowStretch(1, 1);
 
-    for (size_t i = 0; i < splits.size(); ++i) {
-        SplitDisplay* split_display = new SplitDisplay(splits[i].name, splits[i].best_time, c_nanosec(-7875000000000), i == current_split);
-        split_layout->addWidget(split_display, i, 0);
-    }
-    split_layout->setRowStretch(4, 1);
+    update_splits();
 
     connect(&timer_updater, SIGNAL(timeout()), this, SLOT(update_timer()));
 }
@@ -82,6 +80,23 @@ void Taimen::update_timer() {
     main_timer_display->setText(main_timer.current_time_string());
 }
 
+void Taimen::update_splits() {
+    for (size_t i = 0; i < split_displays.size(); ++i) {
+        delete split_displays[i];
+    }
+    split_displays = {};
+    for (size_t i = 0; i < splits.size(); ++i) {
+        SplitDisplay* split_display = new SplitDisplay(
+            splits[i].name, 
+            cumulative_run_times[i], 
+            cumulative_run_times[i] - cumulative_best_run_times[i], 
+            i == current_split);
+        split_displays.emplace_back(split_display);
+        split_layout->addWidget(split_display, i, 0);
+    }
+    split_layout->setRowStretch(split_displays.size() + 1, 1);
+}
+
 void Taimen::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Return) {
         if (main_timer.is_started)
@@ -89,7 +104,11 @@ void Taimen::keyPressEvent(QKeyEvent* event) {
         else
             start_timer();
     } else if (event->key() == Qt::Key_Space) {
-
+        if (main_timer.is_started) {
+            cumulative_run_times[current_split] = main_timer.current_time();
+            ++current_split;
+            update_splits();
+        }
     } else if (event->key() == Qt::Key_Backspace) {
         if (!main_timer.is_started) {
             main_timer.reset();

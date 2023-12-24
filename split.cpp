@@ -1,9 +1,11 @@
 #include "split.hpp"
 #include <QPalette>
+#include <iostream>
 
-Split::Split(const QString& other_name, const c_nanosec& other_best_time) : 
+Split::Split(const QString& other_name, const c_nanosec& other_best_time, const c_nanosec& other_personal_best_run_time) : 
     name(other_name),
     best_time(other_best_time),
+    personal_best_run_time(other_personal_best_run_time),
     current_time(c_zero())
 {}
 
@@ -23,7 +25,10 @@ SplitDisplay::SplitDisplay(
 
     name_label = new QLabel(name);
     time_label = new QLabel(time_to_time_string(time));
-    difference_label = new QLabel(time_difference_to_time_string(difference));
+    if (difference != c_zero())
+        difference_label = new QLabel(time_difference_to_time_string(difference));
+    else
+        difference_label = new QLabel("");
 
     name_label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     time_label->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -31,8 +36,17 @@ SplitDisplay::SplitDisplay(
 
     grid = new QGridLayout();
     grid->addWidget(name_label, 0, 0);
-    grid->addWidget(difference_label, 0, 1);
     grid->addWidget(time_label, 0, 2);
+    grid->addWidget(difference_label, 0, 1);
+    grid->setContentsMargins(0, 0, 0, 0);
 
     setLayout(grid);
+}
+
+SplitDisplay::~SplitDisplay() {
+    delete name_label;
+    delete time_label;
+    if (difference_label != nullptr)
+        delete difference_label;
+    delete grid;
 }

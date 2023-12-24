@@ -8,9 +8,10 @@
 #include <QWidget>
 
 struct Split {
-    Split(const QString& other_name, const c_nanosec& other_best_time);
+    Split(const QString& other_name, const c_nanosec& other_best_time, const c_nanosec& other_personal_best_run_time);
     const QString name;
     c_nanosec best_time;
+    c_nanosec personal_best_run_time;
     c_nanosec current_time;
 };
 
@@ -23,6 +24,7 @@ class SplitDisplay: public QWidget {
             const bool is_current_split = false,
             QWidget* parent = nullptr
         );
+        ~SplitDisplay();
 
     private:
         QLabel* name_label;

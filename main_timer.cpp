@@ -20,6 +20,10 @@ void MainTimer::reset() {
     elapsed_time = c_zero();
 }
 
+c_nanosec MainTimer::current_time() const {
+    return elapsed_time;
+}
+
 QString MainTimer::current_time_string() const {
     return time_to_time_string(elapsed_time);
 }
@@ -57,7 +61,7 @@ QString time_difference_to_time_string(const c_nanosec& nanoseconds) {
     remaining = (remaining % 1000) / 10;
     if (hours != 0) {
         if (hours > 0)
-            return QString::number(hours) + ":"
+            return "+" + QString::number(hours) + ":"
                 + to_2digit_string(minutes) + ":"
                 + to_2digit_string(seconds) + "."
                 + to_2digit_string(remaining);
@@ -68,7 +72,7 @@ QString time_difference_to_time_string(const c_nanosec& nanoseconds) {
                 + to_2digit_string(-remaining);
     } else if (minutes != 0) {
         if (minutes > 0)
-            return QString::number(minutes) + ":"
+            return "+" + QString::number(minutes) + ":"
                 + to_2digit_string(seconds) + "."
                 + to_2digit_string(remaining);
         else
@@ -77,14 +81,14 @@ QString time_difference_to_time_string(const c_nanosec& nanoseconds) {
                 + to_2digit_string(-remaining);
     } else if (seconds != 0) {
         if (seconds > 0)
-            return QString::number(seconds) + "."
+            return "+" + QString::number(seconds) + "."
                 + to_2digit_string(remaining);
         else
             return QString::number(seconds) + "."
                 + to_2digit_string(-remaining);
     } else {
         if (remaining > 0)
-            return "0."
+            return "+0."
                 + to_2digit_string(remaining);
         else
             return "-0."

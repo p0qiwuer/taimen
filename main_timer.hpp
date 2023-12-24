@@ -13,6 +13,7 @@ class MainTimer {
         void stop();
         void update();
         void reset();
+        c_nanosec current_time() const;
         QString current_time_string() const;
         bool is_started = false;
 
