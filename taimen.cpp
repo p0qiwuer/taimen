@@ -2,6 +2,7 @@
 #include <QTimer>
 #include <QApplication>
 #include <QPalette>
+#include <sstream>
 
 
 Taimen::Taimen(QWidget* parent) 
@@ -38,16 +39,16 @@ Taimen::Taimen(QWidget* parent)
     grid_layout->addWidget(main_timer_display, 2, 0, Qt::AlignCenter);
 
     current_split = 0;
-    Split split1(QString("Split 1"), c_nanosec(61000000000), c_nanosec(51000000000));
+    Split split1(QString("Split 1"), c_nanosec(51000000000), c_nanosec(61000000000));
     splits.emplace_back(split1);
-    Split split2(QString("Split 2"), c_nanosec(178000000000), c_nanosec(158000000000));
+    Split split2(QString("Split 2"), c_nanosec(158000000000), c_nanosec(178000000000));
     splits.emplace_back(split2);
-    Split split3(QString("Split 3"), c_nanosec(219000000000), c_nanosec(216000000000));
+    Split split3(QString("Split 3"), c_nanosec(216000000000), c_nanosec(219000000000));
     splits.emplace_back(split3);
 
     c_nanosec cumulative_best_run_time = c_zero();
     for (size_t i = 0; i < splits.size(); ++i) {
-        cumulative_best_run_time += splits[i].best_time;
+        cumulative_best_run_time += splits[i].personal_best_run_time;
         cumulative_best_run_times.emplace_back(cumulative_best_run_time);
         cumulative_run_times.emplace_back(cumulative_best_run_time);
     }
