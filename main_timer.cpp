@@ -4,12 +4,12 @@ MainTimer::MainTimer() : elapsed_time(c_zero()) {}
 
 void MainTimer::start() {
     start_time = std::chrono::steady_clock::now() - elapsed_time;    
-    is_started = true;
+    started = true;
 }
 
 void MainTimer::stop() {
     update();
-    is_started = false;
+    started = false;
 }
 
 void MainTimer::update() {
@@ -26,6 +26,10 @@ c_nanosec MainTimer::current_time() const {
 
 QString MainTimer::current_time_string() const {
     return time_to_time_string(elapsed_time);
+}
+
+bool MainTimer::is_started() const {
+    return started;
 }
 
 c_nanosec c_zero() { return c_nanosec::zero(); }

@@ -15,11 +15,12 @@ class MainTimer {
         void reset();
         c_nanosec current_time() const;
         QString current_time_string() const;
-        bool is_started = false;
+        bool is_started() const;
 
     private:
         std::chrono::time_point<std::chrono::steady_clock> start_time;
         c_nanosec elapsed_time;
+        bool started = false;
 };
 
 c_nanosec c_zero();

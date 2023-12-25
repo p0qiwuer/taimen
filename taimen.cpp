@@ -123,15 +123,15 @@ void Taimen::finish_run() {
 
 void Taimen::keyPressEvent(QKeyEvent* event) {
     if (event->key() == Qt::Key_Return) {
-        if (main_timer.is_started)
+        if (main_timer.is_started())
             stop_timer();
         else if (current_split != splits.size())
             start_timer();
     } else if (event->key() == Qt::Key_Space) {
-        if (main_timer.is_started)
+        if (main_timer.is_started())
             handle_splitting();
     } else if (event->key() == Qt::Key_Backspace) {
-        if (!main_timer.is_started) {
+        if (!main_timer.is_started()) {
             reset_timer();
         }
     } else if (event->key() == Qt::Key_Escape) {
