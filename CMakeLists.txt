@@ -20,6 +20,8 @@ set(PROJECT_SOURCES
         split.hpp
         main_timer.cpp
         main_timer.hpp
+        conf_parser.hpp
+        conf_parser.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

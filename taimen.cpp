@@ -1,12 +1,13 @@
 #include "taimen.hpp"
+#include "conf_parser.hpp"
 #include <QTimer>
 #include <QApplication>
 #include <QPalette>
-#include <sstream>
-
 
 Taimen::Taimen(QWidget* parent) 
     : QWidget(parent) {
+
+    read_conf(QCoreApplication::arguments().at(1).toStdString());
 
     constexpr int screen_width = 480;
     constexpr int screen_height = 640;
